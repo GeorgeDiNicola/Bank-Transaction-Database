@@ -51,7 +51,9 @@ def check_valid(the_input, length):
        @param the_input takes the user input
        @param length takes the length of the dictionary
     """
-    if (int(the_input) <= length):
+    if the_input.lower() == 'q' or the_input.lower() == 'n':
+        return True
+    elif (int(the_input) <= length) :
         return True
     else:
         return False
