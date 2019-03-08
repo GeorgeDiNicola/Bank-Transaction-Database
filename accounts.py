@@ -281,7 +281,7 @@ def main(argv):
 
    #get file of account information and read it into my dictionary
    #filename = os.environ["ACCT_LIST"]
-   filename = '/Users/georgedinicola/Desktop/untitled/ACCT_LIST.txt'
+   filename = './ACCT_LIST.txt'
    accounts_file = open(filename, "r")
    line = accounts_file.readline()
    while line:
