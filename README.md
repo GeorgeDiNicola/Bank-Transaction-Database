@@ -3,7 +3,7 @@ The purpose of this program is to serve as a command-line utility database of ba
 
 Note: Delete the entries from the text file for a fresh start. 
 
-Options for Argument 1:
+Options for the utility argument:
      
      -i : Displays account information
      
