@@ -53,11 +53,25 @@ def check_valid(the_input, length):
     """
     if the_input.lower() == 'q' or the_input.lower() == 'n':
         return True
-    elif (int(the_input) <= length) :
-        return True
+    elif check_if_int(the_input) == True:
+        if (int(the_input) <= length):
+            return True
+        else:
+            return False
     else:
         return False
-
+    
+    
+def check_valid_i(the_input):
+   """check if input is valid account_information function when it asks user to check another
+       account or quit
+       @param the_input takes the user input
+    """
+   if (the_input.lower() == 'q' or the_input.lower() == 'y'):
+       return True
+   else:
+       return False
+    
 
 def is_new_valid(new_acct_number, accounts):
     """check if the account number is new
@@ -96,7 +110,7 @@ def check_quit(choice, accounts):
          Starts by writing to a temporary file as an atomic operation
        @param choice takes the choice the user for quitting or continuing
     """
-    if (choice == 'q' or choice == 'Q'):
+    if (choice.lower() == 'q'):
         try:
             #write out to a new log file
             temp_file = open("temp_file", "w")
@@ -107,16 +121,16 @@ def check_quit(choice, accounts):
                 for tup in accounts[key]:
                     temp_tuple = (key, tup[0], tup[1] , tup[2], tup[3])
                     data_list.append(temp_tuple)
-
             for tup in sorted(data_list, key = lambda x: x[2]):
                 temp_file.write(tup[0] + ":" + tup[1] + ":" + tup[2] + ":" + tup[3] + ":" + tup[4] + "\n")
-                temp_file.close()
+            temp_file.close()
         except:
             print("Error in writing out new database. Old database has been restored")
         else:
             #if temp_file successful, rename the log file
-            os.rename("temp_file", os.environ["ACCT_LIST"])
+            os.rename("temp_file", "ACCT_LIST.txt") #os.environ["ACCT_LIST"])
             sys.exit()
+        sys.exit()
 
 
 def check_new(choice):
@@ -127,7 +141,15 @@ def check_new(choice):
     else:
         return False
 
+def check_if_int(n):
+    try: 
+        int(n)
+        return True
+    except ValueError:
+        return False
 
+
+# sub-main functions
 def account_information(accounts):
     """Functon for displaying account info 
         @param accounts takes a dictionary
@@ -149,8 +171,8 @@ def account_information(accounts):
             i = i + 1
         print("q)uit")
         choice = input("Enter choice => ")
-        check_quit(choice, accounts)
         validity = check_valid(choice, number_of_accounts)
+        check_quit(choice, accounts)
         while (validity == False):
             print("Choice does not exist. Please choose a valid one from the list")
             choice = input("Enter choice => ")
@@ -162,7 +184,14 @@ def account_information(accounts):
         print("          name:  " + accounts[acct_chosen][0][0])
         print("       balance:  $" + str(format(get_account_balance(accounts, acct_chosen), '.2f')))
         choice = input("Would you like to return to the list of account holders? (y)es or (q)uit  ")
+        validity = check_valid_i(choice)
         check_quit(choice, accounts)
+        while (validity == False):
+            print("choice does not exist. Please choose y for yes or q to quit")
+            choice = input("Would you like to return to the list of account holders? (y)es or (q)uit  ")
+            validity = check_valid_i(choice)
+            check_quit(choice, accounts)
+        #check_quit(choice, accounts)
  
 
 def history(accounts):
@@ -186,13 +215,14 @@ def history(accounts):
             i = i + 1
         print("q)uit")
         choice = input("Enter choice => ")
-        check_quit(choice, accounts)
         validity = check_valid(choice, number_of_accounts)
+        check_quit(choice, accounts)
         while (validity == False):
             print("choice does not exist. Please choose a valid one from the list")
             choice = input("Enter choice => ")
             check_quit(choice, accounts)
             validity = check_valid(choice, number_of_accounts)
+        #check_quit(choice, accounts)
         choice = int(choice) - 1
         acct_chosen = sorted_key_list[choice]
         #extract the tuples from the dictionary using the choice
@@ -200,7 +230,8 @@ def history(accounts):
         sorted_transactions = sorted(list_of_transactions, key = lambda x: x[1])
         for transaction in sorted_transactions:
             print("     " + transaction[1] + " " + get_full_type(transaction[2]) + " " + "$" + transaction[3])
-
+    check_quit(choice, accounts)
+        
 def add_transaction(accounts):
     """Perform a transaction
        @param accounts takes a dictionary
@@ -223,6 +254,10 @@ def add_transaction(accounts):
         print("n)ew account")
         print("q)uit")
         choice = input("Enter choice => ")
+        
+        #This check valid portion needs to fix the exception in check_valid
+        validity = check_valid(choice, number_of_accounts)
+        
         check_quit(choice, accounts)
         new = check_new(choice)
         if (new == True):
